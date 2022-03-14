@@ -12,7 +12,7 @@ const axios = require("axios");
     pass: 'ScrivoDaJS'
   }
 
-  //pload = {'username':'UR10','pass':'NuovaPassword'}
+  pload = {'username':'UR10','pass':'NuovaPassword'}
 
   console.log('Il dato è:', pload);
   console.log('Il tipo di dato è:', typeof pload);
