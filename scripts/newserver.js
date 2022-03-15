@@ -2,20 +2,20 @@ var express = require("express");       //Express è necessario (per cosa?)
 var app = express();
 var path = require('path');
 var bodyParser = require("body-parser");
-app.use(bodyParser.urlencoded({ extended: false }));    //Da capire cosa fa
+//app.use(bodyParser.urlencoded({ extended: false }));    //Analizza il testo come dati codificati URL
+app.use(bodyParser.json());
 /*app.get("/", function(req, res) {
     res.end('Ciao! Sono il tuo server')
    // res.sendFile(path.join(__dirname + '/indexMatte.html'));      //Serve solo per la pagina html
 });*/
 app.post("/", function(req,res){        //Questo gestisce le richieste POST
-    res.send('Sto funzionando');
+    res.send('SERVER MESSAGE: Sto funzionando');
     console.log('------------------------------');
     console.log("Ricevuto una richiesta POST");
     //console.log(req);
     console.log(req.body);              // contenuto della richiesta
-    console.log('Il tipo di dato è:', typeof req.body);
-    //var traducted = JSON.parse(req.body);
-    //console.log(traducted);
+    //console.log('Il tipo di dato è:', typeof req.body);
+    console.log('HEADERS -->', req.headers);
     console.log('Username:', req.body.username);     // username
     console.log('Password:', req.body.pass);         // password
     console.log('------------------------------');

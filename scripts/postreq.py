@@ -26,9 +26,12 @@ if __name__ == '__main__':
     #*****___Converting JSON to Python dictionary and storing in a variable___*****
 
     print('Il codice sta funzionando. Inizio.')
+    pload = {'username':'UR10','pass':'Python'}                  #Definisco il payload che posto 
+    headers2 = {'Content-Type': 'application/json'}
+    import json
 
-    pload = {'username':'UR10','pass':'NuovaPassword'}                  #Definisco il payload che posto 
-    r = requests.post('http://localhost:5000/',data = pload)      #Posto il pload definito prima all'http scelto
+    r = requests.post('http://localhost:5000/',data = json.dumps(pload), headers = headers2)      #Posto il pload definito prima all'http scelto
+    #print (r.headers)
     #r_dictionary = r.json()                                         #Creo la variabile r_dictionary e gli associo quello che leggo da r (convertito da json a dictionary)
     #print(r_dictionary['form']['password'])                                     #Stampo il contenuto di r_dictionary con la chiave "form"
     
