@@ -30,13 +30,14 @@ if __name__ == '__main__':
     headers2 = {'Content-Type': 'application/json'}
     import json
 
-    r = requests.post('http://localhost:5000/',data = json.dumps(pload), headers = headers2)      #Posto il pload definito prima all'http scelto
+    #r = requests.post('http://localhost:5000/',data = json.dumps(pload), headers = headers2)      #Posto il pload definito prima all'http scelto
     #print (r.headers)
     #r_dictionary = r.json()                                         #Creo la variabile r_dictionary e gli associo quello che leggo da r (convertito da json a dictionary)
     #print(r_dictionary['form']['password'])                                     #Stampo il contenuto di r_dictionary con la chiave "form"
     
-    #rw = requests.get('http://localhost:8080')            #Leggo da ngrok (che devo attivare prima e inserire qui il giusto https) --> Per ora mi dà 502 Bad Gateway
+    rw = requests.get('http://localhost:5000')            
     #rw_dict = rw.json()
+    print (rw.text)
     #numeroIdpass = input('Which user you need? ')
     #numeroId = int (numeroIdpass)-1
     #print ('Your user is', rw_dict['data'][numeroId]['first_name'], rw_dict['data'][numeroId]['last_name'])

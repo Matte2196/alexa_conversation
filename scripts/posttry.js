@@ -2,6 +2,8 @@
 const axios = require("axios");
 // const fetch = require ('node-fetch');
 //const { json } = require("body-parser");
+var DB2_json = require('./database.json')
+var fs = require('fs');
 
 //devo capire come scrivere il formato dei dati 
 /* const pload = JSON.stringify({
@@ -36,3 +38,8 @@ const axios = require("axios");
       console.log(res.data);
     })*/
   //////////////////////////////////////////
+
+  console.log(DB2_json.Robot.Status)
+
+  ///////////////////SCRIVERE SU JSON/////////////////////////
+  //Non posso usare fs.writeFile() perchè si aspetta una stringa
