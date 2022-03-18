@@ -37,9 +37,28 @@ if __name__ == '__main__':
     
     rw = requests.get('http://localhost:5000')            
     #rw_dict = rw.json()
-    print (rw.text)
+    #print (rw.text)
     #numeroIdpass = input('Which user you need? ')
     #numeroId = int (numeroIdpass)-1
     #print ('Your user is', rw_dict['data'][numeroId]['first_name'], rw_dict['data'][numeroId]['last_name'])
 
     print('Il codice ha funzionato.')
+
+#**********TEST SCRITTURA JSON*************
+
+    import json
+    data = {"Robot": {
+        "Status": {
+            "Is_Working": 'true',
+            "Task_Selected": 0,
+            "Protective_Stop": 'false',
+            "Is_Gripper_Closed": 'false'
+                }
+        }
+        }
+    with open("WritingTEST_PY.json", "w") as outfile:
+            json.dump(data, outfile)
+#Funziona, ma "true/false" non li vede se li metto come booleani (senza apici)
+#In ogni caso salva un JSON, non male!
+#Devo provare a vedere se riesco, come in JS, a usare come "data" di 
+#esempio il "database.json" e a modificarne un campo.

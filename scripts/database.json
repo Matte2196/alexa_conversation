@@ -3,7 +3,8 @@
         "Status":{
             "Is_Working":false,
             "Task_Selected":0,
-            "Protective_Stop":false
+            "Protective_Stop":false,
+            "Is_Gripper_Closed":false
         },
         "Positions":{
             "Initial":[0.0, 0.0, 0.0],
