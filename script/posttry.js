@@ -2,7 +2,7 @@
 const axios = require("axios");
 // const fetch = require ('node-fetch');
 //const { json } = require("body-parser");
-var DB2_json = require('./database.json')
+var DB2_json = require('./template.json')
 var fs = require('fs');
 
 //devo capire come scrivere il formato dei dati 

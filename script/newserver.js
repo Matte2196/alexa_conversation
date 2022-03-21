@@ -2,7 +2,7 @@ var express = require("express");       //Express è necessario (per il server)
 var app = express();
 var path = require('path');
 var bodyParser = require("body-parser");
-var DB_json = require('./database.json');
+var DB_json = require('./template.json');
 var fs = require('fs');
 //app.use(bodyParser.urlencoded({ extended: false }));    //Analizza il testo come dati codificati URL
 app.use(bodyParser.json());

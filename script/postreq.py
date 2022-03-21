@@ -47,7 +47,7 @@ if __name__ == '__main__':
 #**********TEST SCRITTURA JSON*************
 
     import json
-    data = {"Robot": {
+    data = {"Robot": {      #In realtà devo importare "template.json" e modificare i parametri
         "Status": {
             "Is_Working": 'true',
             "Task_Selected": 0,

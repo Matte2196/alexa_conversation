@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>alexa_conversation</name>
+  <version>0.0.0</version>
+  <description>The alexa_conversation package</description>
+
+  <maintainer email="matte2@todo.todo">matte2</maintainer>
+
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>rospy</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+
+</package>
