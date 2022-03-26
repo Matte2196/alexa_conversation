@@ -1,43 +1,278 @@
 {
-    "Robot":{
-        "Status":{
-            "Is_Working":false,
-            "Task_Selected":0,
-            "Protective_Stop":false,
-            "Is_Gripper_Closed":false
+    "CurrentVersion": "0.2.4",
+    "Updated": "25/03/2022",
+    "Comments": "Vettori Cambiati",
+    "Robot": {
+        "Status": {
+            "Is_Working": false,
+            "Task_Selected": 1,
+            "Protective_Stop": false,
+            "Is_Gripper_Closed": false
         },
-        "Positions":{
-            "Initial":[0.0, 0.0, 0.0],
-            "Current":[0.0, 0.0, 0.0],
-            "Destination":[0.0, 0.0, 0.0],
-            "Speed":0
+        "Positions": {
+            "Initial": {
+                "x": 0,
+                "y": 0,
+                "z": 0,
+                "rx": 0,
+                "ry": 0,
+                "rz": 0
+            },
+            "Current": {
+                "x": 5,
+                "y": 5,
+                "z": 5,
+                "rx": 5,
+                "ry": 5,
+                "rz": 5
+            },
+            "Destination": {
+                "x": 0,
+                "y": 0,
+                "z": 0,
+                "rx": 0,
+                "ry": 0,
+                "rz": 0
+            },
+            "Home": {
+                "x": 0,
+                "y": 0,
+                "z": 0,
+                "rx": 0,
+                "ry": 0,
+                "rz": 0
+            },
+            "Speed": 0,
+            "Comments": "Riferite all'EE. Meglio mettere la posizione in giunti"
         }
     },
-    "Server":{
-        "Is_Server_Working":false,
-        "Is_NGROK_Working":false
+    "Server": {
+        "Is_Server_Working": false,
+        "Is_NGROK_Working": false
     },
-    "Tasks":{
-        "WhatHappened":{
-            "TaskID":1
+    "Tasks": {
+        "WhatHappened": {
+            "TaskID": 0,
+            "EventDescription": "Missing object"
         },
-        "Handover":{
-            "TaskID":2
+        "Handover": {
+            "TaskID": 1,
+            "Target": "tool name",
+            "Is_Target_Taken": false
+        },
+        "Thirsty": {
+            "TaskID": 2
+        },
+        "Assistant": {
+            "TaskID": 3
+        },
+        "Reposition": {
+            "TaskID": 4
         }
     },
-    "Smartwatch":{
-        "Is_working":false,
-        "Pattern":{
-            "P01/Event":[1000,500,1000,500,1000],
-            "P02/Error":[2000,1000,2000,1000,2000],
-            "P03/TaskFinished":[500,500,500,500,500]
+    "Smartwatch": {
+        "Is_working": false,
+        "SelectedP": 1,
+        "Pattern": {
+            "P01": [
+                1000,
+                500,
+                1000,
+                500,
+                1000
+            ],
+            "P02": [
+                2000,
+                1000,
+                2000,
+                1000,
+                2000
+            ],
+            "P03": [
+                500,
+                500,
+                500,
+                500,
+                500
+            ],
+            "Legenda": {
+                "P01": "Event",
+                "P02": "Error",
+                "P03": "TaskFinished"
+            }
         }
     },
-    
-    
-    
-    "CampoX":{
-        "Vettore":[{"Val1":1},{"Val2":2},"Valore3", 4]
+    "Objects": {
+        "SelectedObject": {
+            "GrabPosition": {
+                "x": 0,
+                "y": 0,
+                "z": 0,
+                "rx": 0,
+                "ry": 0,
+                "rz": 0
+            },
+            "MultipleObj": false,
+            "IsTaken": true,
+            "Comments": "IsTaken \u00e8 settato a true per simulare l'assenza dell'oggetto"
+        },
+        "Screwdriver": {
+            "GrabPosition": {
+                "x": 0,
+                "y": 0,
+                "z": 0,
+                "rx": 0,
+                "ry": 0,
+                "rz": 0
+            },
+            "MultipleObj": true,
+            "Type": {
+                "Flat": {
+                    "GrabPosition": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0,
+                        "rx": 0,
+                        "ry": 0,
+                        "rz": 0
+                    },
+                    "IsTaken": false
+                },
+                "Phillips": {
+                    "GrabPosition": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0,
+                        "rx": 0,
+                        "ry": 0,
+                        "rz": 0
+                    },
+                    "IsTaken": false
+                }
+            },
+            "IsTaken": false
+        },
+        "Wrench": {
+            "GrabPosition": {
+                "x": 0,
+                "y": 0,
+                "z": 0,
+                "rx": 0,
+                "ry": 0,
+                "rz": 0
+            },
+            "MultipleObj": false,
+            "IsTaken": true,
+            "Comments": "IsTaken \u00e8 settato a true per simulare l'assenza dell'oggetto"
+        },
+        "Spanner": {
+            "GrabPosition": {
+                "x": 0,
+                "y": 0,
+                "z": 0,
+                "rx": 0,
+                "ry": 0,
+                "rz": 0
+            },
+            "MultipleObj": true,
+            "Type": {
+                "Small": {
+                    "GrabPosition": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0,
+                        "rx": 0,
+                        "ry": 0,
+                        "rz": 0
+                    },
+                    "IsTaken": false
+                },
+                "Big": {
+                    "GrabPosition": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0,
+                        "rx": 0,
+                        "ry": 0,
+                        "rz": 0
+                    },
+                    "IsTaken": false
+                }
+            },
+            "IsTaken": false
+        },
+        "Allen key": {
+            "GrabPosition": {
+                "x": 0,
+                "y": 0,
+                "z": 0,
+                "rx": 0,
+                "ry": 0,
+                "rz": 0
+            },
+            "MultipleObj": false,
+            "IsTaken": false
+        },
+        "Bottle": {
+            "GrabPosition": {
+                "x": 0,
+                "y": 0,
+                "z": 0,
+                "rx": 0,
+                "ry": 0,
+                "rz": 0
+            },
+            "MultipleObj": true,
+            "Type": {
+                "Water": {
+                    "GrabPosition": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0,
+                        "rx": 0,
+                        "ry": 0,
+                        "rz": 0
+                    },
+                    "IsTaken": false
+                },
+                "Tea": {
+                    "GrabPosition": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0,
+                        "rx": 0,
+                        "ry": 0,
+                        "rz": 0
+                    },
+                    "IsTaken": false
+                }
+            },
+            "IsTaken": false
+        },
+        "ObjectX": {
+            "GrabPosition": {
+                "x": 0,
+                "y": 0,
+                "z": 0,
+                "rx": 0,
+                "ry": 0,
+                "rz": 0
+            },
+            "MultipleObj": true,
+            "IsTaken": false
+        }
     },
-    "CampoY":{}
+    "CampoX": {
+        "Vettore": [
+            {
+                "Val1": 1
+            },
+            {
+                "Val2": 2
+            },
+            "Valore3",
+            4
+        ]
+    },
+    "CampoY": {}
 }

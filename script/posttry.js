@@ -47,14 +47,13 @@ var fs = require('fs');
   console.log(DB2_json.Robot.Status.Is_Working) //Qui il valore non è ancora modificato (= false)
 
   DB2_json.Robot.Status.Is_Working=true;        //Qui modifico il valore (= true)
-
-  var dataString = JSON.stringify(DB2_json)     //Lo converto in stringa per salvarlo con writeFile
+  
+  //Lo converto in stringa per salvarlo con writeFile
+  var dataString = JSON.stringify(DB2_json)     
   fs.writeFile('WritingTEST.json', dataString, (err) => {    //Lo salvo
-    if (err) {
-        throw err;
-    }
+    if (err) {throw err;}
     console.log("JSON data is saved.");
     var JSONmodified = require('./WritingTEST.json')         //Qui in realtà prende il file prima delle modifiche
     //Devo provare a usare Async/Await
     console.log(JSONmodified.Robot.Status.Is_Working)     //Qui invece il valore non è modificato (=false)
-});
+  });

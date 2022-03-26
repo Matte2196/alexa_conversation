@@ -2,6 +2,7 @@
 
 import rospy
 from std_msgs.msg import String
+from geometry_msgs.msg import PoseStamped
 
 rospy.init_node('Alexa Conversation')
 rate = rospy.Rate(1000) # 1000hz
