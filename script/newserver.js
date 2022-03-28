@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 
 //*********************POST REQUESTS****************************/
 app.post("/", function(req,res){        //Questo gestisce le richieste POST
-    //res.send('SERVER MESSAGE: Sto funzionando');
+    res.send('SERVER MESSAGE: Sto funzionando');        //Se non metto una risposta dà errore sulla richiesta da Alexa!
     console.log('------------------------------');
     
     DB_json = req.body; //Sovrascrivo la variabile con quello che ho ottenuto da POST

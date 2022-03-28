@@ -27,7 +27,7 @@ def TASK_Selector ():
     if (DBjson['Robot']['Status']['Protective_Stop'] == True):
         DBjson['Robot']['Status']['Task_Selected'] = 101    #Se sono in protective stop, mi manda nello stato 101
     
-    task = DBjson['Robot']['Status']['Task_Selected']       #Il Task_Selected devo cambiarlo da server
+    task = DBjson['Robot']['Status']['Task_Selected']       #Il Task_Selected lo cambio da server
 
     if (task == 0):
         print ("WhatHappenedAPI")   #Restituisce il JSON aggiornato (gestire da server?)
@@ -37,59 +37,45 @@ def TASK_Selector ():
     
     elif (task == 1):
         print ("Handover_API")
-        # 0) Prende i parametri che gli servono dal DB
-        #       --> Presi dal DBjson
-        # 1) Invia al robot la posizione finale e la velocità richieste
-        # - ATTENZIONE! Posizione e velocità devo inviarle una volta sola.
-        # - Per risolvere questo problema posso usare un while o un if
-        if (DBjson['Robot']['Status']['Is_Working'] == False):
-            Move_UR(DBjson)
-            DBjson['Robot']['Status']['Is_Working'] == True        
-        # 2) Nel mentre, continua ad aggiornare la posizione attuale del robot sul DB
-        EEposition = Read_UR_Position (DBjson)
-        DBjson['Robot']['Positions']['Current'] = EEposition #Crea problemi!! Lo vede come una stringa
-        # 3) Con un "if", controlla quando il robot raggiunge la posizione desiderata.
-        #    O più semplicemente, quando il robot si ferma perchè ha raggiunto la posizione
-        if (DBjson['Tasks']['Handover']['Is_Target_Taken'] == False):    #Se l'oggetto non è preso, va a prenderlo
-            if (ReachedGoal (DBjson) == True):      #Definire un intorno (come?)
-                DBjson['Objects']['SelectedObject'] = DBjson['Objects']['Wrench']   #Come test metto wrench
-                if (DBjson['Objects']['SelectedObject']['MultipleObj'] == True):     #Invece che selectedObject potrei usare Handover.Target
-                    # SE MultipleObj == true 
-                    # 3.2) Vibrazione orologio e fermo tutto.
-                    # 3.3) Scrivo su WhatHappened che c'è un oggetto multiplo
-                    DBjson['Smartwatch']['SelectedP'] = 1
-                    Vibrate_Watch(DBjson)
-                    DBjson['Tasks']['WhatHappened']['EventDescription'] = "Multiple object detected"
-                    task = 102       #Devo impostare qualcosa di diverso, in modo che alla seconda lettura non faccia nulla
-                else:
-                    if (DBjson['Objects']['SelectedObject']['IsTaken'] == True):
-                        # 3.2) Vibrazione orologio e fermo tutto.
-                        DBjson['Smartwatch']['SelectedP'] = 1
-                        Vibrate_Watch(DBjson)
-                        # 3.3) Scrivo su WhatHappened che l'oggetto non c'è
-                        DBjson['Tasks']['WhatHappened']['EventDescription'] = "Missing object"
-                        task = 103
-                    else: 
-                        # SE MultipleObj == false e (dopo) IsTaken == false:
-                        # 3.2) Chiudo il gripper e afferro l'oggetto
-                        DBjson['Robot']['Status']['Is_Gripper_Closed'] == True
-                        Gripper_IO (DBjson)
-                        DBjson['Tasks']['Handover']['Is_Target_Taken'] == True
-                        # 3.3) Modifico la posizione finale con quella letta dall'optitrack
-                        DBjson['Robot']['Positions']['Destination'] = Opti_read()
-                        # 4) A questo punto, il robot riparte per portare l'oggetto                
         
-        elif (DBjson['Tasks']['Handover']['Is_Target_Taken'] == True):   #Oggetto preso: lo porto all'utente
-            #DA SETTARE IL TARGET CON NUOVA ARCHITETTURA (wrist tracking)
-            Move_UR (DBjson)
-            # 5) IF (posizione finale raggiunta) 
-            if (EEposition - DBjson['Robot']['Positions']['Destination'] < 1):
-                # 5.1) Vibrazione orologio 
-                DBjson['Smartwatch']['SelectedP'] = 3
-                Vibrate_Watch(DBjsons)
-                # 5.2) Rilascio il gripper
-                DBjson['Robot']['Status']['Is_Gripper_Closed'] == False
-                Gripper_IO (DBjson)
+        EEposition = Read_UR_Position (DBjson)                              #Aggiorno la posizione sul Database
+        DBjson['Robot']['Positions']['Current'] = EEposition 
+
+        #Ho già preso l'oggetto?
+        if (DBjson['Tasks']['Handover']['Is_Target_Taken'] == False):       #Oggetto non ancora preso
+            GrabbingOBJ = DBjson['Objects']['SelectedObject']      
+            PositionOBJ = DBjson['Objects'][GrabbingOBJ]['GrabPosition']
+            MultipleOBJ = DBjson['Objects'][GrabbingOBJ]['MultipleObj']
+            IsTakenOBJ = DBjson['Objects'][GrabbingOBJ]['IsTaken']
+            DBjson['Robot']['Positions']['Destination'] = PositionOBJ    #Devo dargli la posizione dell'oggetto
+            #Settare la velocità
+            Move_UR(DBjson)
+            if (ReachedGoal(DBjson) == True):
+                if (MultipleOBJ == True):
+                    DBjson['Smartwatch']['SelectedP'] = 1                       #Pattern 1 Orologio
+                    Vibrate_Watch (DBjson)
+                    DBjson['Robot']['Status']['Task_Selected'] = 102            #Oggetto multiplo
+                else:
+                    if (IsTakenOBJ == True):
+                        DBjson['Smartwatch']['SelectedP'] = 1                       #Pattern 1 Orologio
+                        Vibrate_Watch (DBjson)
+                        DBjson['Robot']['Status']['Task_Selected'] = 103            #Oggetto mancante
+                    else:
+                        DBjson['Robot']['Status']['Is_Gripper_Closed'] = True      #Chiude il gripper
+                        Gripper_IO(DBjson)
+                        DBjson['Tasks']['Handover']['Is_Target_Taken'] = True
+        else:                                                               #Oggetto già preso
+            DBjson['Positions']['Destination'] = Opti_read()                #Gli invio la posizione del polso come destinazione
+            #Settare la velocità
+            Move_UR(DBjson)                                                 #Muovo l'UR verso il polso
+
+            if (ReachedGoal(DBjson) == True):
+                DBjson['Robot']['Status']['Is_Gripper_Closed'] = False      #Apre il gripper
+                Gripper_IO(DBjson)
+                DBjson['Tasks']['Handover']['Is_Target_Taken'] = False
+                DBjson['Smartwatch']['SelectedP'] = 3                       #Pattern 3 Orologio
+                Vibrate_Watch (DBjson)
+                DBjson['Robot']['Status']['Task_Selected'] = 99
           
     elif (task == 2):
         print ("Thirsty_API")
@@ -160,13 +146,8 @@ def Read_UR_Position (DBjson):
     Ry = input ('Leggi ry da UR: ')
     Rz = input ('Leggi rz da UR: ')    
 
-    DBjson['Robot']['Positions']['Current']['x'] = int (Px) 
-    DBjson['Robot']['Positions']['Current']['y'] = int(Py) 
-    DBjson['Robot']['Positions']['Current']['z'] = int (Pz) 
-    DBjson['Robot']['Positions']['Current']['rx'] = int (Rx) 
-    DBjson['Robot']['Positions']['Current']['ry'] = int (Ry) 
-    DBjson['Robot']['Positions']['Current']['rz'] = int (Rz) 
-    
+    DBjson['Robot']['Positions']['Current'] = str([Px, Py, Pz, Rx, Ry, Rz])     #ATTENZIONE! Non converte il vettore in stringa ma solo quello che c'è dentro!
+
     EEposition = DBjson['Robot']['Positions']['Current']
     
     #EEposition = getActualTCPPose() #return = coordinate cartesiane del tool
@@ -175,14 +156,15 @@ def Read_UR_Position (DBjson):
 
 #Invia le coordinate al robot
 def Move_UR (DBjson):
+    #Conviene passare per UR_RTDE??
     EEdestination = DBjson['Robot']['Positions']['Destination']
     EEspeed = DBjson['Robot']['Positions']['Speed']
+    #Invia i due valori a UR_RTDE
     print (EEdestination)
     print (EEspeed)
     return ()
         
-#Legge le coordinate della mano dall'optitrack --> Cosa succede se la mano si sposta????
-#Nel messaggio vocale di output potrei dire che io porto il tool dove ha la mano attualmente.
+#Legge le coordinate della mano dall'optitrack 
 def Opti_read ():
     #Dall'optitrack mi arrivano la posizione della base riferita al world e
     #la posizione del wrist (sempre riferita al world).
@@ -218,12 +200,29 @@ def Vibrate_Watch (DBjson):
 def ReachedGoal (DBjson):
     #Questa funzione controlla se la posizione attuale è vicina alla posizione finale
     #if (EEposition - DBjson['Robot']['Positions']['Destination'] < 1):
-    deltaP = input ('Posizione raggiunta: Delta = ')
-    delta = int(deltaP)
-    if (delta < 2):
+
+    CurrentPOS = eval (DBjson['Robot']['Positions']['Current'])
+    TargetPOS = eval (DBjson['Robot']['Positions']['Destination'])
+    eps = 3     #DA DEFINIRE MEGLIO, NON SO SE E' UN VALORE SENSATO
+    for i in range(7):
+        diff = abs(TargetPOS[i] - CurrentPOS[i])
+        if (diff > delta):
+            delta = diff
+    if (delta < eps):
         return True
     else:
         return False
+
+    deltaP = input ('Posizione raggiunta: Delta = ')
+    delta2 = int(deltaP)
+    if (delta2 < 2):
+        return True
+    else:
+        return False
+
+def Vectorizer (StringVector):
+    Vectorized = eval(StringVector)
+    return Vectorized
 
 
 #ALTRE UTILITY VECCHIE:
