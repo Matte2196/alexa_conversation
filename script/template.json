@@ -1,8 +1,8 @@
 {
-    "CurrentVersion":"0.3.1",
-    "Updated":"28/03/2022",
-    "Comments":"Vettori Cambiati --> Stringhe",
-    "TODO":"CAMBIARE POSIZIONI RILEVATE!! SISTEMA DI COORDINATE DIVERSO",
+    "CurrentVersion":"0.3.3",
+    "Updated":"30/03/2022",
+    "Comments":"Aggiunto epsilon",
+    "TODO":"Check generale",
     "Robot":{
         "Status":{
             "Is_Working":false,
@@ -16,8 +16,10 @@
             "Initial":"[X, Y, Z, RX, RY, RZ, RW]",
             "Current":"[X, Y, Z, RX, RY, RZ, RW]",
             "Destination":"[X, Y, Z, RX, RY, RZ, RW]",
-            "Home":"[178.35, -309.36, 564.86, 3.136, 0.096, -0.047, 0]",
+            "Home":"[0.1914, -0.3441, 0.5826, -0.0003, -0.9999, -0.0106, 0.0056]",
+            "WristTEST":"[-0.1606, -0.7619, 0.4462, -0.2405, -0.9699, 0.0362, 0.0039]",
             "Speed":0,
+            "Epsilon":0.05,
             "Comments":"Riferite all'EE. Meglio mettere la posizione in giunti"
         }
     },
@@ -33,7 +35,8 @@
         "Handover":{
             "TaskID":1,
             "Target": "tool name",
-            "Is_Target_Taken": false
+            "Is_Target_Taken": false,
+            "GoingUP": false
         },
         "Thirsty":{
             "TaskID":2
@@ -62,46 +65,46 @@
     "Objects":{
         "SelectedObject": "none",
         "Screwdriver":{
-            "GrabPosition":"[476.87, -486.04, 360.24, 0.050, -3.092, 0.123, 0]",
+            "GrabPosition":"[0.4747, -0.4974, 0.3460, -0.0200, -0.9996, -0.0103, 0.0159]",
             "MultipleObj": true,
             "IsTaken": false,
             "Comments": "Negli oggetti multipli, la GrabPosition è impostata al più vicino di essi."
         },
 
         "Flat Screwdriver":{
-            "GrabPosition":"[476.87, -486.04, 360.24, 0.050, -3.092, 0.123, 0]",
+            "GrabPosition":"[0.4747, -0.4974, 0.3460, -0.0200, -0.9996, -0.0103, 0.0159]",
             "MultipleObj": false,
             "IsTaken": false
         },
 
         "Phillips Screwdriver":{
-            "GrabPosition":"[475.44, -607.33, 357.69, 0.006, -3.111, 0.122, 0]",
+            "GrabPosition":"[0.4622, -0.6256, 0.3545, -0.0147, -0.9998, -0.0088, 0.0032]",
             "MultipleObj": false,
             "IsTaken": false
         },
 
         "Bigger Phillips Screwdriver":{
-            "GrabPosition":"[482.03, -755.43, 358.03, 0.018, 3.199, 0.067, 0]",
+            "GrabPosition":"[0.4627, -0.7497, 0.3598, 0.0150, 0.9998, 0.0054, 0.0099]",
             "MultipleObj": false,
             "IsTaken": false
         },
 
         "Wrench":{
             "Synonyms": "Spanner",
-            "GrabPosition":"[477.08, -874.02, 373.25, 0.020, -3.131, 0.033, 0]",
+            "GrabPosition":"[0.4738, -0.8660, 0.3453, 0.0527, 0.9983, -0.0088, 0.01939]",
             "MultipleObj": false,
             "IsTaken": true,
             "Comments": "IsTaken è settato a true per simulare l'assenza dell'oggetto"
         },
 
         "Allen key":{
-            "GrabPosition":"[477.34, -1004.94, 353.69, 0.044, 3.194, -0.021, 0]",
+            "GrabPosition":"[0.4651, -0.9956, 0.3549, -0.0231, -0.9994, -0.021, 0.0082]",
             "MultipleObj": false,
             "IsTaken": false
         },
         
         "Bottle":{
-            "GrabPosition":"[267.29, -855.26, 105.61, 1.566, 0.003, 0.010, 0]",
+            "GrabPosition":"[0.2563, -0.8652, 0.1612, -0.0003, 0.8183, -0.5743, 0.0181]",
             "MultipleObj": false,
             "IsTaken": false
         },
