@@ -1,0 +1,6 @@
+<launch>
+
+    <node pkg="alexa_conversation" name="tf_node" type="tf_node.py"/>
+    <node pkg="alexa_conversation" name="TESTING_conversation" type="TESTING_conversation.py"/>
+
+</launch>

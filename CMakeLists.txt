@@ -7,6 +7,8 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   sensor_msgs
+  tf2
+  tf2_ros
 )
 
 ## Generate messages in the 'msg' folder
@@ -43,6 +45,9 @@ catkin_package(
   rospy
   std_msgs
   sensor_msgs
+  tf2
+  tf2_ros
+  ur_speed_control
 #  DEPENDS system_lib
 )
 
