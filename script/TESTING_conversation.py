@@ -5,6 +5,7 @@ import json
 import rospy
 import time
 import ast
+from std_msgs.msg import Bool
 from geometry_msgs.msg import PoseStamped, Pose
 from sensor_msgs.msg import ChannelFloat32
 from ur_speed_control.msg import robot_status
@@ -34,6 +35,8 @@ tf_transformation = Pose()
 pose_received = False
 tf_received = False
 PSstatus_received = False
+goal_received = False
+is_goal_reached = False
 
 #Questo talker si può rimuovere?
 def talker():
@@ -60,12 +63,19 @@ def protective_stop_callback(data):
     if data.safety_mode == 3:
         PSstatus_received = True
 
+def reached_goal(data):
+    global is_goal_reached
+    global goal_received
+    is_goal_reached = data.data
+    goal_received = True
+
 watch_pub = rospy.Publisher('GearSDataVibration', ChannelFloat32, queue_size=1)    
 UR_pub = rospy.Publisher('des_pose', PoseStamped, queue_size=1)
 
 rospy.Subscriber("/act_pose", PoseStamped, actual_pose_callback)
 rospy.Subscriber("/tf_URBase_RightWrist", Pose, tf_callback)
 rospy.Subscriber("/ur_rtde/safety_status", robot_status, protective_stop_callback)
+rospy.Subscriber("/cartesian_controller/trajectory_completed", Bool, reached_goal)
 
 gripper_client = rospy.ServiceProxy('/ur_rtde/onrobot_gripper_control', command_gripper)
 FAST=False
@@ -76,7 +86,7 @@ CLOSE=True
 rospy.sleep(2)
 
 while (pose_received == False or tf_received == False):
-    rospy.logwarn_throttle(5,'Wait for Calbacks')
+    rospy.logwarn_throttle(5,'Wait for Callbacks')
 
 #Legge il JSON ogni tot millisecondi e vede se ci sono variazioni sul task selected
 def TASK_Selector ():
@@ -100,98 +110,87 @@ def TASK_Selector ():
     
     elif (task == 1):
         print ("Handover_API")
-        
         EEposition = Read_UR_Position (DBjson)                              #Aggiorno la posizione attuale sul Database
         DBjson['Robot']['Positions']['Current'] = EEposition 
 
-        #Ho già preso l'oggetto?
-        if (DBjson['Tasks']['Handover']['Is_Target_Taken'] == False):       #Oggetto non ancora preso
-            
-            """ #Prima porto l'UR su di 20cm 
-            if (DBjson['Tasks']['Handover']['GoingUP'] == False):
-                upMove = 0.15 #Sono 15 cm
-                DBjson['Robot']['Positions']['Initial'] = DBjson['Robot']['Positions']['Current'] #OCCHIO! Così le setta uguali ogni volta
-                EEdestUP = eval(DBjson['Robot']['Positions']['Initial'])
-                #EEdestUP[2] = EEdestUP[2]+upMove
-                EEdestUP[2] = 0.7
-                DBjson['Robot']['Positions']['Destination'] = str(EEdestUP)
-
-                Move_UR(DBjson)
-                DBjson['Robot']['Positions']['Epsilon'] = 0.05      #5cm di precisione
-                if (ReachedGoal == True):
-                    DBjson['Robot']['Positions']['Destination'] = DBjson['Robot']['Positions']['Current']
+        if (DBjson['Tasks']['Handover']['Is_Target_Taken'] == False):       #Oggetto non ancora preso 
+            #ActPos = eval(DBjson['Robot']['Positions']['Current'])
+            if (DBjson['Tasks']['Handover']['GoingUP'] == False):           #Non sono ancora andato su
+                if (DBjson['Robot']['Status']['Is_Working'] == False):
+                    DBjson['Robot']['Positions']['Initial'] = DBjson['Robot']['Positions']['Current']
+                    #upMove = 0.15
+                    EEdestUP = eval(DBjson['Robot']['Positions']['Initial'])
+                    #EEdestUP[2] = EEdestUP[2]+upMove
+                    EEdestUP[2] = 0.65
+                    DBjson['Robot']['Positions']['Destination'] = str(EEdestUP)
                     Move_UR(DBjson)
-                    DBjson['Tasks']['Handover']['GoingUP'] = True
-            else: """
-            
-            GrabbingOBJ = DBjson['Objects']['SelectedObject']      
-            PositionOBJ = DBjson['Objects'][GrabbingOBJ]['GrabPosition']
-            MultipleOBJ = DBjson['Objects'][GrabbingOBJ]['MultipleObj']
-            IsTakenOBJ = DBjson['Objects'][GrabbingOBJ]['IsTaken']
-            DBjson['Robot']['Positions']['Destination'] = PositionOBJ    #Devo dargli la posizione dell'oggetto
-            #Settare la velocità
-            DBjson['Robot']['Positions']['Epsilon'] = 0.01
-            Move_UR(DBjson)
-            DBjson['Robot']['Positions']['Epsilon'] = 0.01      #1cm di precisione
-            if (ReachedGoal(DBjson) == True):
-                """ DBjson['Robot']['Positions']['Destination'] = DBjson['Robot']['Positions']['Current']   #Setta la destinazione = act pose
-                Move_UR(DBjson)  """                                                                        #Dice al robot di muoversi dov'è già (così si ferma)
-                if (MultipleOBJ == True):
-                    DBjson['Smartwatch']['SelectedP'] = 1                       #Pattern 1 Orologio
-                    DBjson['Smartwatch']['Is_working'] = True
-                    Vibrate_Watch (DBjson)
-                    DBjson['Robot']['Status']['Task_Selected'] = 102            #Oggetto multiplo
+                    DBjson['Robot']['Status']['Is_Working'] = True
                 else:
-                    if (IsTakenOBJ == True):
-                        DBjson['Smartwatch']['SelectedP'] = 1                       #Pattern 1 Orologio
+                    if (ReachedGoal() == True):                             #Sono arrivato su
+                        print ("Sono andato su, ora vado a prendere l'oggetto")
+                        DBjson['Tasks']['Handover']['GoingUP'] = True
+                        DBjson['Robot']['Status']['Is_Working'] = False
+            else:                                                           #Sono già su
+                GrabbingOBJ = DBjson['Objects']['SelectedObject']      
+                PositionOBJ = DBjson['Objects'][GrabbingOBJ]['GrabPosition']
+                MultipleOBJ = DBjson['Objects'][GrabbingOBJ]['MultipleObj']
+                MissingOBJ = DBjson['Objects'][GrabbingOBJ]['IsTaken']
+                if (DBjson['Robot']['Status']['Is_Working'] == False):
+                    DBjson['Robot']['Positions']['Destination'] = PositionOBJ    #Devo dargli la posizione dell'oggetto
+                    Move_UR(DBjson)
+                    DBjson['Robot']['Status']['Is_Working'] = True
+                else:
+                    if (ReachedGoal() == True):
+                        DBjson['Tasks']['Handover']['GoingUP'] = False
+                        DBjson['Robot']['Status']['Is_Working'] = False
+                        if (MultipleOBJ == True):
+                            DBjson['Smartwatch']['SelectedP'] = 1                       #Pattern 1 Orologio
+                            DBjson['Smartwatch']['Is_working'] = True
+                            Vibrate_Watch (DBjson)
+                            DBjson['Robot']['Status']['Task_Selected'] = 102            #Oggetto multiplo
+                        else:
+                            if (MissingOBJ == True):
+                                DBjson['Smartwatch']['SelectedP'] = 1                       #Pattern 1 Orologio
+                                DBjson['Smartwatch']['Is_working'] = True
+                                Vibrate_Watch (DBjson)
+                                DBjson['Robot']['Status']['Task_Selected'] = 103            #Oggetto mancante
+                            else:
+                                DBjson['Robot']['Status']['Is_Gripper_Closed'] = True      #Chiude il gripper
+                                Gripper_IO(DBjson)
+                                DBjson['Tasks']['Handover']['Is_Target_Taken'] = True
+                                DBjson['Objects'][GrabbingOBJ]['IsTaken'] = True
+        else:                                                               #Oggetto già preso
+            if (DBjson['Tasks']['Handover']['GoingUP'] == False):           #Non sono ancora andato su
+                if (DBjson['Robot']['Status']['Is_Working'] == False):
+                    DBjson['Robot']['Positions']['Initial'] = DBjson['Robot']['Positions']['Current']
+                    upMove = 0.15
+                    EEdestUP = eval(DBjson['Robot']['Positions']['Initial'])
+                    EEdestUP[2] = EEdestUP[2]+upMove
+                    DBjson['Robot']['Positions']['Destination'] = str(EEdestUP)
+                    Move_UR(DBjson)
+                    DBjson['Robot']['Status']['Is_Working'] = True
+                else:
+                    if (ReachedGoal() == True):                             #Sono arrivato su
+                        DBjson['Tasks']['Handover']['GoingUP'] = True
+                        DBjson['Robot']['Status']['Is_Working'] = False
+            else:                                                           #Sono già andato su
+                if (DBjson['Robot']['Status']['Is_Working'] == False):
+                    DBjson['Robot']['Positions']['Destination'] = Opti_read(DBjson)                #Gli invio la posizione del polso come destinazione
+                    #DBjson['Robot']['Positions']['Destination'] = DBjson['Robot']['Positions']['Home']     #Per prova metto home
+                    Move_UR(DBjson)                                                 #Muovo l'UR verso il polso
+                    DBjson['Robot']['Status']['Is_Working'] = True
+                else:
+                    if (ReachedGoal() == True):
+                        DBjson['Robot']['Status']['Is_Gripper_Closed'] = False      #Apre il gripper
+                        Gripper_IO(DBjson)
+                        DBjson['Tasks']['Handover']['Is_Target_Taken'] = False
+                        DBjson['Smartwatch']['SelectedP'] = 3                       #Pattern 3 Orologio
                         DBjson['Smartwatch']['Is_working'] = True
                         Vibrate_Watch (DBjson)
-                        DBjson['Robot']['Status']['Task_Selected'] = 103            #Oggetto mancante
-                    else:
-                        DBjson['Robot']['Status']['Is_Gripper_Closed'] = True      #Chiude il gripper
-                        Gripper_IO(DBjson)
-                        DBjson['Tasks']['Handover']['Is_Target_Taken'] = True
-        else:                                                               #Oggetto già preso
-            
-            """ #Prima porto l'UR su di 20cm 
-            if (DBjson['Tasks']['Handover']['GoingUP'] == False):
-                upMove = 0.15 #Sono 15 cm
-                DBjson['Robot']['Positions']['Initial'] = DBjson['Robot']['Positions']['Current']  #OCCHIO! Così le setta uguali ogni volta
-
-                EEdestUP = eval(DBjson['Robot']['Positions']['Initial'])
-                #EEdestUP[2] = EEdestUP[2]+upMove
-                EEdestUP[2] = 0.7
-                DBjson['Robot']['Positions']['Destination'] = str(EEdestUP)
-
-                Move_UR(DBjson)
-                DBjson['Robot']['Positions']['Epsilon'] = 0.05      #5cm di precisione
-                
-                EEUP = eval(DBjson['Robot']['Positions']['Current'])    #PROVA
-                if (EEUP[2] == 0.7):                                      #PROVA
-                #if (ReachedGoal == True):
-                    #DBjson['Robot']['Positions']['Destination'] = DBjson['Robot']['Positions']['Current']
-                    #Move_UR(DBjson)
-                    DBjson['Tasks']['Handover']['GoingUP'] = True
-            else: """
-            #DBjson['Robot']['Positions']['Destination'] = Opti_read(DBjson)                #Gli invio la posizione del polso come destinazione
-            #Per prova metto home
-            DBjson['Robot']['Positions']['Destination'] = DBjson['Robot']['Positions']['Home']
-            #Settare la velocità
-            
-            Move_UR(DBjson)                                                 #Muovo l'UR verso il polso
-            DBjson['Robot']['Positions']['Epsilon'] = 0.01      #1cm di precisione
-
-            if (ReachedGoal(DBjson) == True):
-                """ DBjson['Robot']['Positions']['Destination'] = DBjson['Robot']['Positions']['Current']   #Setta la destinazione = act pose
-                Move_UR(DBjson)  """                                                                        #Dice al robot di muoversi dov'è già (così si ferma)
-                DBjson['Robot']['Status']['Is_Gripper_Closed'] = False      #Apre il gripper
-                Gripper_IO(DBjson)
-                DBjson['Tasks']['Handover']['Is_Target_Taken'] = False
-                DBjson['Smartwatch']['SelectedP'] = 3                       #Pattern 3 Orologio
-                DBjson['Smartwatch']['Is_working'] = True
-                Vibrate_Watch (DBjson)
-                DBjson['Robot']['Status']['Task_Selected'] = 99
-                DBjson['Tasks']['Handover']['GoingUP'] = False
+                        DBjson['Robot']['Status']['Task_Selected'] = 99
+                        DBjson['Tasks']['Handover']['GoingUP'] = False
+                        DBjson['Robot']['Status']['Is_Working'] = False
+                        DBjson['Tasks']['Handover']['GoingUP'] = False
           
     elif (task == 2):
         print ("Thirsty_API")
@@ -302,6 +301,8 @@ def Opti_read (DBjson):
 
     HandOverEEdestination = eval(DBjson['Robot']['Positions']['Destination'])
 
+    tf_transformation.position.x =  tf_transformation.position.x + 0.1
+    tf_transformation.position.z =  tf_transformation.position.z + 0.2
     tf_transformation.orientation.x = HandOverEEdestination[3]
     tf_transformation.orientation.y = HandOverEEdestination[4]
     tf_transformation.orientation.z = HandOverEEdestination[5]
@@ -355,38 +356,17 @@ def Vibrate_Watch (DBjson):
 
     return()
 
-def ReachedGoal (DBjson):
+def ReachedGoal ():
     #Questa funzione controlla se la posizione attuale è vicina alla posizione finale
     
-    CurrP = eval (DBjson['Robot']['Positions']['Current'])
-    TargP = eval (DBjson['Robot']['Positions']['Destination'])
-    eps = DBjson['Robot']['Positions']['Epsilon']     #DA DEFINIRE MEGLIO, NON SO SE E' UN VALORE SENSATO
-    
-    Delta = [0, 0, 0]
-    Delta[0] = abs(TargP[0] - CurrP[0])
-    Delta[1] = abs(TargP[1] - CurrP[1])
-    Delta[2] = abs(TargP[2] - CurrP[2])
-    deltaMax = max(Delta)
-
-    if (deltaMax < eps):
-        #DBjson['Robot']['Positions']['Destination'] = DBjson['Robot']['Positions']['Current']
-        return True
-    else:
-        return False
-
-    """ deltaP = input ('Posizione raggiunta: Delta = ')
-    delta2 = int(deltaP)
-    if (delta2 < 2):
-        return True
-    else:
-        return False """
+    global is_goal_reached
+    return is_goal_reached
+   
 
 def Vectorizer (StringVector):
     Vectorized = eval(StringVector)
     return Vectorized
 
-
-#ALTRE UTILITY VECCHIE:
 
 if __name__ == '__main__':
 

@@ -1,7 +1,7 @@
 {
-    "CurrentVersion":"0.3.4",
-    "Updated":"31/03/2022",
-    "Comments":"Posizioni da aggiornare, alcune già modificate",
+    "CurrentVersion":"0.3.9",
+    "Updated":"06/04/2022",
+    "Comments":"Aggiunti 'sinonimi'",
     "TODO":"Check generale",
     "Robot":{
         "Status":{
@@ -12,15 +12,14 @@
         },
         "Positions":{
             "Commento": "Per convertire le posizioni in stringa uso 'eval()'",
-            "Commento2": "Valori espressi in 'mm' e 'rad', riferiti alla base - Quelli con 4 decimali sono da aggiornare",
+            "Commento2": "Valori espressi in 'mm' e 'rad', riferiti alla base.",
             "Initial":"[X, Y, Z, RX, RY, RZ, RW]",
             "Current":"[X, Y, Z, RX, RY, RZ, RW]",
             "Destination":"[X, Y, Z, RX, RY, RZ, RW]",
-            "Home":"[0.152, -0.365, 0.565, -0.999, 0.008, 0.003, 0.007]",
-            "WristTEST":"[-0.1606, -0.7619, 0.4462, -0.2405, -0.9699, 0.0362, 0.0039]",
+            "Home":"[0.1419, -0.4211, 0.2960, 0.7306, -0.6797, -0.0634, 0.0087]",
             "Speed":0,
             "Epsilon":0.01,
-            "Comments":"xxx"
+            "Comments":"Speed and Epsilon not used yet."
         }
     },
     "Server":{
@@ -34,7 +33,7 @@
         },
         "Handover":{
             "TaskID":1,
-            "Target": "tool name",
+            "Target": "(not used)",
             "Is_Target_Taken": false,
             "GoingUP": false
         },
@@ -64,47 +63,78 @@
     },
     "Objects":{
         "SelectedObject": "none",
-        "Screwdriver":{
-            "GrabPosition":"[0.457, -0.496, 0.357, -0.999, 0.033, 0.000, 0.007]",
+        "screwdriver":{
+            "GrabPosition":"[0.4657, -0.5022, 0.3542, -0.6976, 0.7163, -0.0130, 0.0007]",
             "MultipleObj": true,
             "IsTaken": false,
             "Comments": "Negli oggetti multipli, la GrabPosition è impostata al più vicino di essi."
         },
 
-        "Phillips Screwdriver":{
-            "GrabPosition":"[0.457, -0.496, 0.357, -0.999, 0.033, 0.000, 0.007]",
+        "phillips screwdriver":{
+            "GrabPosition":"[0.4657, -0.5022, 0.3542, -0.6976, 0.7163, -0.0130, 0.0007]",
             "MultipleObj": false,
             "IsTaken": false
         },
 
-        "Flat Screwdriver":{
-            "GrabPosition":"[0.474, -0.608, 0.362, 0.999, 0.007, -0.021, 0.020]",
+        "flat screwdriver":{
+            "GrabPosition":"[0.4862, -0.6042, 0.3509, 0.6931, -0.7181, -0.0092, 0.0616]",
             "MultipleObj": false,
             "IsTaken": false
         },
 
-        "Bigger Phillips Screwdriver":{
-            "GrabPosition":"[0.4627, -0.7497, 0.3598, 0.0150, 0.9998, 0.0054, 0.0099]",
+        "bigger phillips screwdriver":{
+            "GrabPosition":"[0.4862, -0.7372, 0.3509, 0.6931, -0.7181, -0.0092, 0.0616]",
             "MultipleObj": false,
             "IsTaken": false
         },
 
-        "Wrench":{
-            "Synonyms": "Spanner",
-            "GrabPosition":"[0.4738, -0.8660, 0.3453, 0.0527, 0.9983, -0.0088, 0.01939]",
+        "spanner":{
+            "Synonyms": "wrench",
+            "GrabPosition":"[0.4862, -0.8619, 0.3509, 0.6931, -0.7181, -0.0092, 0.0616]",
             "MultipleObj": false,
             "IsTaken": true,
             "Comments": "IsTaken è settato a true per simulare l'assenza dell'oggetto"
         },
 
-        "Allen key":{
-            "GrabPosition":"[0.476, -0.866, 0.345, 0.052, 0.998, -0.008, 0.019]",
+        "spawner":{
+            "Synonyms": "wrench",
+            "GrabPosition":"[0.4862, -0.8619, 0.3509, 0.6931, -0.7181, -0.0092, 0.0616]",
+            "MultipleObj": false,
+            "IsTaken": true,
+            "Comments": "IsTaken è settato a true per simulare l'assenza dell'oggetto"
+        },
+
+        "spinner":{
+            "Synonyms": "wrench",
+            "GrabPosition":"[0.4862, -0.8619, 0.3509, 0.6931, -0.7181, -0.0092, 0.0616]",
+            "MultipleObj": false,
+            "IsTaken": true,
+            "Comments": "IsTaken è settato a true per simulare l'assenza dell'oggetto"
+        },
+
+        "allen key":{
+            "Synonyms": "allen key",
+            "GrabPosition":"[0.4862, -0.9876, 0.3410, 0.6931, -0.7181, -0.0092, 0.0616]",
+            "MultipleObj": false,
+            "IsTaken": false
+        },
+
+        "alan key":{
+            "Synonyms": "allen key",
+            "GrabPosition":"[0.4862, -0.9876, 0.3410, 0.6931, -0.7181, -0.0092, 0.0616]",
+            "MultipleObj": false,
+            "IsTaken": false
+        },
+
+        "oven":{
+            "Synonyms": "allen key",
+            "GrabPosition":"[0.4862, -0.9876, 0.3410, 0.6931, -0.7181, -0.0092, 0.0616]",
             "MultipleObj": false,
             "IsTaken": false
         },
         
-        "Bottle":{
-            "GrabPosition":"[0.2563, -0.8652, 0.1612, -0.0003, 0.8183, -0.5743, 0.0181]",
+        "bottle":{
+            "GrabPosition":"[0.2582, -0.8586, 0.2039, 0.5602, -0.6196, 0.4106, 0.3652]",
             "MultipleObj": false,
             "IsTaken": false
         },

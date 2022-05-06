@@ -1,0 +1,79 @@
+PROCEDURA PER ATTIVAZIONE DA TERMINALE:
+__________________________________________________________________________________________________________________
+
+OPERAZIONI PRELIMINARI
+
+- Collegare tutti i sistemi (UR, Optitrack, ecc) alla stessa rete;
+- Verificare che l'UR10e sia in configurazione "start" e sia attivato il remote control;
+- Accendere l'optitrack;
+- Avviare Motive (da un pc collegato alla stessa rete). Se necessario, effettuare la calibrazione;
+- Avviare il server (da terminale, all'interno del folder, --> node newserver.js)
+- Procedere con le operazioni da terminale.
+__________________________________________________________________________________________________________________
+
+NGROK:
+ngrok http $ROS_IP:5000
+(IMPORTANTE: inserire nella skill di Alexa il link aggiornato per indirizzare correttamente le richieste)
+__________________________________________________________________________________________________________________
+
+LANCIARE VRPN (PER COLLEGARMI SULLA PORTA 50)
+roslaunch vrpn_client_ros sample.launch server:=192.168.2.50
+__________________________________________________________________________________________________________________
+
+SMARTWATCH
+roslaunch rosbridge_server rosbridge_websocket.launch authenticate:=false
+__________________________________________________________________________________________________________________
+
+LANCIARE IL PACCHETTO DI ALEXA CONVERSATION
+roslaunch alexa_conversation alexa_conversation.launch
+__________________________________________________________________________________________________________________
+
+CON QUESTO ATTIVO IL NODO PER CONTROLLARE IL ROBOT (prima attiva remote control da pad e mettere UR in START)
+roslaunch ur_speed_control cartesian_controller.launch
+__________________________________________________________________________________________________________________
+
+QUESTO APRE QUELLO CHE PUBBLICA LE TRASFORMATE
+rosrun alexa_conversation tf_node.py
+__________________________________________________________________________________________________________________
+
+LANCIARE LO SCRIPT IN PYTHON
+rosrun alexa_conversation TESTING_conversation.py
+__________________________________________________________________________________________________________________
+==================================================================================================================
+DESCRIZIONE DEI FILE:
+
+__________________________________________________________________________________________________________________
+
+TESTING_conversation.py
+
+E' lo script che contiene la logica di funzionamento. Al suo interno ci sono tutte le chiamate ai nodi e ai servizi
+tramite ROS.
+Ogni task viene richiamato in base all'identificativo corrispondente, controllato tramite condizioni "if-else".
+__________________________________________________________________________________________________________________
+
+conversation.py
+
+Non utilizzato. Inizialmente doveva essere lo script principale.
+__________________________________________________________________________________________________________________
+
+database.json
+
+Contiene tutte le informazioni relative alle operazioni in corso (tra cui l'identificativo del task). 
+Viene letto e scritto sia dallo script in python che dalla skill.
+__________________________________________________________________________________________________________________
+
+template.json
+
+E' uguale al database, ma serve come "copia di backup" poichè non viene mai sovrascritto durante le operazioni.
+__________________________________________________________________________________________________________________
+
+newserver.js
+
+Crea il server (sulla porta desiderata, in questo caso la 5000) e gestisce le chiamate ad esso tramite le richieste 
+di tipo GET e POST.
+__________________________________________________________________________________________________________________
+
+tf_node.py
+
+Nodo che effettua la trasformazione necessaria ad ottenere le coordinate del polsino riferite alla base del robot.
+__________________________________________________________________________________________________________________

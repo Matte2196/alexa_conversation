@@ -1,26 +1,25 @@
 {
-    "CurrentVersion": "0.3.3",
-    "Updated": "30/03/2022",
-    "Comments": "Aggiunto epsilon",
+    "CurrentVersion": "0.3.9",
+    "Updated": "06/04/2022",
+    "Comments": "Aggiunti 'sinonimi'",
     "TODO": "Check generale",
     "Robot": {
         "Status": {
             "Is_Working": false,
-            "Task_Selected": 102,
+            "Task_Selected": 99,
             "Protective_Stop": false,
             "Is_Gripper_Closed": false
         },
         "Positions": {
             "Commento": "Per convertire le posizioni in stringa uso 'eval()'",
-            "Commento2": "Valori espressi in 'mm' e 'rad', riferiti alla base",
-            "Initial": "[X, Y, Z, RX, RY, RZ, RW]",
-            "Current": "[X, Y, Z, RX, RY, RZ, RW]",
-            "Destination": "[X, Y, Z, RX, RY, RZ, RW]",
-            "Home": "[0.1914, -0.3441, 0.5826, -0.0003, -0.9999, -0.0106, 0.0056]",
-            "WristTEST": "[-0.1606, -0.7619, 0.4462, -0.2405, -0.9699, 0.0362, 0.0039]",
+            "Commento2": "Valori espressi in 'mm' e 'rad', riferiti alla base.",
+            "Initial": "[0.2633395072615936, -0.8593972675478098, 0.19966050274858965, 0.5602904625710255, -0.6196991419612652, 0.4106565702917565, 0.36525162871728517]",
+            "Current": "[-0.26919507481107297, -0.9779212344953983, 0.3970779148365268, 0.5602904625286032, -0.6196991419456873, 0.4106565703444113, 0.3652516287495902]",
+            "Destination": "[-0.2623028082861113, -0.9763872522370394, 0.39655592822094565, 0.5602904625710255, -0.6196991419612652, 0.4106565702917565, 0.36525162871728517]",
+            "Home": "[0.1419, -0.4211, 0.2960, 0.7306, -0.6797, -0.0634, 0.0087]",
             "Speed": 0,
-            "Epsilon": 0.05,
-            "Comments": "Riferite all'EE. Meglio mettere la posizione in giunti"
+            "Epsilon": 0.01,
+            "Comments": "Speed and Epsilon not used yet."
         }
     },
     "Server": {
@@ -34,7 +33,7 @@
         },
         "Handover": {
             "TaskID": 1,
-            "Target": "screwdriver",
+            "Target": "bottle",
             "Is_Target_Taken": false,
             "GoingUP": false
         },
@@ -50,7 +49,7 @@
     },
     "Smartwatch": {
         "Is_working": false,
-        "SelectedP": 0,
+        "SelectedP": 3,
         "Pattern": {
             "P01": "[1000,500,1000,500,1000]",
             "P02": "[2000,1000,2000,1000,2000]",
@@ -63,44 +62,71 @@
         }
     },
     "Objects": {
-        "SelectedObject": "screwdriver",
-        "Screwdriver": {
-            "GrabPosition": "[0.4747, -0.4974, 0.3460, -0.0200, -0.9996, -0.0103, 0.0159]",
+        "SelectedObject": "bottle",
+        "screwdriver": {
+            "GrabPosition": "[0.4657, -0.5022, 0.3542, -0.6976, 0.7163, -0.0130, 0.0007]",
             "MultipleObj": true,
             "IsTaken": false,
-            "Comments": "Negli oggetti multipli, la GrabPosition è impostata al più vicino di essi."
+            "Comments": "Negli oggetti multipli, la GrabPosition \u00e8 impostata al pi\u00f9 vicino di essi."
         },
-        "Flat Screwdriver": {
-            "GrabPosition": "[0.4747, -0.4974, 0.3460, -0.0200, -0.9996, -0.0103, 0.0159]",
+        "phillips screwdriver": {
+            "GrabPosition": "[0.4657, -0.5022, 0.3542, -0.6976, 0.7163, -0.0130, 0.0007]",
             "MultipleObj": false,
             "IsTaken": false
         },
-        "Phillips Screwdriver": {
-            "GrabPosition": "[0.4622, -0.6256, 0.3545, -0.0147, -0.9998, -0.0088, 0.0032]",
+        "flat screwdriver": {
+            "GrabPosition": "[0.4862, -0.6042, 0.3509, 0.6931, -0.7181, -0.0092, 0.0616]",
             "MultipleObj": false,
             "IsTaken": false
         },
-        "Bigger Phillips Screwdriver": {
-            "GrabPosition": "[0.4627, -0.7497, 0.3598, 0.0150, 0.9998, 0.0054, 0.0099]",
+        "bigger phillips screwdriver": {
+            "GrabPosition": "[0.4862, -0.7372, 0.3509, 0.6931, -0.7181, -0.0092, 0.0616]",
             "MultipleObj": false,
             "IsTaken": false
         },
-        "Wrench": {
-            "Synonyms": "Spanner",
-            "GrabPosition": "[0.4738, -0.8660, 0.3453, 0.0527, 0.9983, -0.0088, 0.01939]",
+        "spanner": {
+            "Synonyms": "wrench",
+            "GrabPosition": "[0.4862, -0.8619, 0.3509, 0.6931, -0.7181, -0.0092, 0.0616]",
             "MultipleObj": false,
             "IsTaken": true,
-            "Comments": "IsTaken è settato a true per simulare l'assenza dell'oggetto"
+            "Comments": "IsTaken \u00e8 settato a true per simulare l'assenza dell'oggetto"
         },
-        "Allen key": {
-            "GrabPosition": "[0.4651, -0.9956, 0.3549, -0.0231, -0.9994, -0.021, 0.0082]",
+        "spawner": {
+            "Synonyms": "wrench",
+            "GrabPosition": "[0.4862, -0.8619, 0.3509, 0.6931, -0.7181, -0.0092, 0.0616]",
+            "MultipleObj": false,
+            "IsTaken": true,
+            "Comments": "IsTaken \u00e8 settato a true per simulare l'assenza dell'oggetto"
+        },
+        "spinner": {
+            "Synonyms": "wrench",
+            "GrabPosition": "[0.4862, -0.8619, 0.3509, 0.6931, -0.7181, -0.0092, 0.0616]",
+            "MultipleObj": false,
+            "IsTaken": true,
+            "Comments": "IsTaken \u00e8 settato a true per simulare l'assenza dell'oggetto"
+        },
+        "allen key": {
+            "Synonyms": "allen key",
+            "GrabPosition": "[0.4862, -0.9876, 0.3410, 0.6931, -0.7181, -0.0092, 0.0616]",
             "MultipleObj": false,
             "IsTaken": false
         },
-        "Bottle": {
-            "GrabPosition": "[0.2563, -0.8652, 0.1612, -0.0003, 0.8183, -0.5743, 0.0181]",
+        "alan key": {
+            "Synonyms": "allen key",
+            "GrabPosition": "[0.4862, -0.9876, 0.3410, 0.6931, -0.7181, -0.0092, 0.0616]",
             "MultipleObj": false,
             "IsTaken": false
+        },
+        "oven": {
+            "Synonyms": "allen key",
+            "GrabPosition": "[0.4862, -0.9876, 0.3410, 0.6931, -0.7181, -0.0092, 0.0616]",
+            "MultipleObj": false,
+            "IsTaken": false
+        },
+        "bottle": {
+            "GrabPosition": "[0.2582, -0.8586, 0.2039, 0.5602, -0.6196, 0.4106, 0.3652]",
+            "MultipleObj": false,
+            "IsTaken": true
         },
         "ObjectX": {
             "GrabPosition": "[X, Y, Z, RX, RY, RZ, RW]",
